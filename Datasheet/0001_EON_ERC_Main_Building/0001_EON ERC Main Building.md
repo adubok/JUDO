@@ -4,7 +4,7 @@ This data set records measurement data from the operation of a non-residential m
 
 The measured data come from the building of the E.ON Energy Research Center (E.ON ERC) of the RWTH Aachen University and are written by an advanced monitoring system and a building automation system [2](#sources).
 
-## Motivation for Dataset Creation ##
+## Motivation for dataset creation ##
 
 - **Why was the dataset created?** (e.g., were there specific tasks in mind, or a specific gap that needed to be filled?)
 
@@ -32,47 +32,76 @@ The measured data come from the building of the E.ON Energy Research Center (E.O
 
 - **Any other comments?**
 
-## Dataset Composition ##
-  
-- **How is the data set structured? What are the instances?** (e.g., hardware apparatus/sensor, manual human curation, software program, software interface/API; how were these constructs/measures/methods validated?)
+## Dataset composition ##
 
+- **How is the data set structured? What are the instances?** (e.g., hardware apparatus/sensor, time series, software program, software interface/API; how were these constructs/measures/methods validated?)
 
-    The dataset consists of timeseries of individual instances. Our instances are names “data point“ We use the following definition for the term “data point”: a data point is an information carrier that continuously provides information about a state.
+     The dataset includes different time series of five unrelated month. Our instances are time series of every “data point“ in  We use the following definition for the term “data point”: a data point is an information carrier that continuously provides information about a state.
 
-    Each timeseries represents a “data point“ of one BUDO key in the selected interval. Every datapoint consists of a series of the values of the measured variable (BUDO key) and the associated timestamp.
+    Each time series represents a “data point“ of one BUDO key in the selected interval. Every datapoint consists of a series of the values of the measured variable (BUDO key) and the associated timestamp.
 
-- **Are relationships between instances made explicit in the data? Are schemas of the technical equipment included? Were these schemas prepared in a graph model?** (e.g., hardware apparatus/sensor, manual human curation, software program, software interface/API; how were these constructs/measures/methods validated?)
+- **Are relationships between instances made explicit in the data? Are schemas of the technical equipment included? Is there a representation of the schemas as a graph model?** (e.g., hardware apparatus/sensor, technical building equipment, software program, software interface/API; how were these constructs/measures/methods validated?)
 
     The time series of the individual data points are always related to each other. A time series of an installation that is linked to another installation can only be evaluated for certain applications without considering the linked installation. For example, for use in advanced control systems, viewing the linked time series provides valuable information.
 
     Since the measurements are threshold-based and constantly recorded and thus form a time series, the individual instances are related in time.
     A threshold-based database only stores data, if the change in the measured value is bigger than a defined boundary.
 
-    Also the different systems (like CHP, heat pump,..) are connected in the system. So many BUDO keys and therefore datapoints are directly related.
+    Also the different systems (like CHP, heat pump,..) are connected in the system. BUDO keys and datapoints are directly related.
 
-- **How many instances of each type are there? What technical equipment is included?**
+- **How many instances of each type are there? What technical equipment is included?** (e.g. technical equipment: heat pump, air handling unit, heat exchanger, boiler; e.g. for instance types: command, temperature sensors, status, volume flow)
   
-    The dataset consists of **Y** BUDO keys of eight different systems and four months. These systems are:
-        - Heatpump (X BUDO keys)
-        - CHP (X BUDO keys)
-        - Glycocooler (X BUDO keys)
-        - Boiler (X BUDO keys)
-        - Distributor (X BUDO keys)
-        - Cold water generator (X BUDO keys)
-        - High temperature consumer (X BUDO keys)
-        - Geothermal probes (X BUDO keys)
-
+    The dataset consists of 765 data points of 31 technical devices and five months. These systems are:
+        - Geothermal field (221 data points)
+        - Heat pump (181 data points)
+        - Glycol chiller (68 data points)
+        - Heat exchanger (57 data points)
+        - Concrete core activation (CCA) (56 data points)
+        - Boiler (29 data points)
+        - Combined Heat and Power (CHP) (26 data points)
+        - Chiller (8 data points)
     For every month and system there exists a single csv file, in which the described data points are assigned to the systems.
 
-- **What data (static and dynamic) of the instances is available?**
+    The types of data points are the following:
+        - Command (221 data points)
+        - Temperature sensors (189 data points)
+        - Status (81 data points)
+        - Alarm (65 data points)
+        - Volume flow (58 data points)
+        - Position (26 data points)
 
+- **What data (static and dynamic) of the instances is available?** (e.g. dimensions, types, measured values)
 
+    Each instance is provided with a BUDO key containing the following components:
+        - System
+        - Subsystem
+        - Subsubsystem
+        - Medium/Position
+        - Type
+        - Function type
+    In addition, 40 additional categories can be added to each data point. We added the categories “building“, “room“ and “unit“.
 
 - **What information (static and dynamic) can be given about the system(s) in which the data was recorded?**
+    __Geothermal field:__
+    The geothermal field consists of 41 probes, each 100 meters deep, located around the E.ON main building. A depth of 100 meters was chosen as otherwise German mining law would apply. Each probe contains a comprehensive measurement infrastructure that measures the temperature and overall volume flow through each probe at different depths.
+
+    __Heat pump:__
 
 
-- **What information (static and dynamic) can be given about the system(s) in which the data was recorded?**
-- ****
+    __Glycol chiller:__
+
+    __Heat exchanger:__
+
+    __Concrete core activation:__
+
+    __Boiler:__
+
+    __Combined Heat and Power:__
+
+    __Chiller:__
+
+
+
 
 - **What data does each instance consist of?**
     “Raw” data (e.g., unprocessed text or images)? Features/attributes? Is there a label/target associated with instances? If the instances are related to people, are subpopulations identified (e.g., by age, gender, etc.) and what is their distribution?
@@ -96,7 +125,7 @@ The measured data come from the building of the E.ON Energy Research Center (E.O
 
 - **Any other comments?**
 
-    The data is published in xyz ".csv" files for every system of the building seperately for four seperated months. In each file every BUDO key of every system is listed.
+    The data is published in 60 ".csv" files for every system of the building seperately for five seperated months and temporal resolution. In each file every BUDO key of every system is listed. The data exists as raw-data and in 1- and 15-minutes resolution.
 
 ### Data Collection Process ###
 
@@ -106,19 +135,19 @@ The measured data come from the building of the E.ON Energy Research Center (E.O
 
 - **Who was involved in the data collection process?** (e.g., students, crowdworkers) How were they compensated? (e.g., how much were crowdworkers paid?
 
-    There are a lot of contributors from the EBC, who helped in installing the monitoring system and in collecting this published data. A list can be found here: (seperat,am ende einfügen oder hier?)
+    There are a lot of contributors from the EBC, who helped in installing the monitoring system and in collecting this published data. As these are considerably more than 100 persons who can no longer be named individually, a complete list is not provided. Each person has either received compensation in the form of a salary or worked for his or her student education.
 
 - **Over what time-frame was the data collected?** Does the collection time-frame match the creation time-frame?
 
     The monitoring system and the building automation system exist since 2012. The published data describes a time span of four seperate months. The months selected had the least system downtime since the start of the systems and represent the operation of the building in every season (winter,spring,summer,autum).
 
-**Are there any gaps or errors in the recorded data? Has it been analyzed how often these occur?**
+- **How many gaps ore errors are in the data set? How can a user of the dataset recognize them?**
 
+    A gap can be determined by comparing the data points. Since the data is stored on a threshold basis, "gaps" can occur naturally. This may be because the threshold value was too high or the data point has not changed. This occurs, for example, if the associated technical system is not switched on.
 
+- **How was the data associated with each instance acquired?** Was the data directly observable (e.g. sensors, commands), reported by subjects, or indirectly inferred/derived from other data? If the latter two, were they validated/verified and if so how?
 
-- **How was the data associated with each instance acquired?** Was the data directly observable (e.g., raw text, movie ratings), reported by subjects (e.g., survey responses), or indirectly inferred/derived from other data (e.g., part of speech tags; model-based guesses for age or language)? If the latter two, were they validated/verified and if so how?
-
-    The data was acquired by sensors. The stored measurement values of one sensor in combination with the corresponding timestamps form an instance.
+    The data was acquired by sensors. The sensors are related to each system. The sensors were validated during commissioning. This was repeated at irregular intervals. In particular, the data points from the monitoring system (data source=MONI) are of high quality.
 
 - **Does the dataset contain all possible instances and when not, what is the population?** Is it, for instance, a sample (not necessarily random) from a larger set of instances? Is the sample representative of the larger set? If not, why not (e.g., to cover a more diverse range of instances)? How does this affect possible uses?
 
@@ -148,9 +177,11 @@ The measured data come from the building of the E.ON Energy Research Center (E.O
 
     __4. Eliminating downtimes:__ Months with a lot of downtimes and missing time stamps were manually eliminated from the published data. This was achieved by examining some sensitive sensors, which normally change their value frequently. This made it easy to identify downtimes when there was a long period without change. All times with high downtimes were eliminated.
 
+    __5. Equidistant__ All time series were stored raw, that means threshold based. In addition, we have stored equidistant time series that are available in 1- and 15-minute resolution.
+
 - **Was the “raw” data saved in addition to the preprocessed/cleaned data?** (e.g., to support unanticipated future uses)
 
-    All measurements are stored in a database of the EBC.
+    All measurements are stored in a database of the EBC. We deliver the raw data with the data set, but recommend using the equidistant data.
 
 - **Is the preprocessing software available?**
 
@@ -161,7 +192,7 @@ The measured data come from the building of the E.ON Energy Research Center (E.O
     Since this dataset is logged from a non-residential building it represents a typical operation of these type of buildings. With this data the mentioned motivation can be achieved. Of course there are special situations/months that are not covered by this dataset.
 
 - **What must be considered when processing the time series data?**
-- 
+    The dataset is as it is. Threshold-based storage does not always make it possible to distinguish between a data failure and a measurement that has not changed. However, this is only very rarely the case in the published data sets. There were undocumented failures of individual systems. Some tests were also carried out with the technical installations, which were abnormal in their behaviour.
 
 - **Any other comments?**
 
@@ -173,11 +204,12 @@ The measured data come from the building of the E.ON Energy Research Center (E.O
 
 - **When will the dataset be released/first distributed?** (Is there a canonical paper/reference for this dataset?)
 
-    xyz
+    The first part of the dataset will be published at the ISARC 2019 (36th International Symposium on Automation and Robotics in Construction).
 
-- **What license (if any) is it distributed under?** Are there any copyrights on the data?
+- **What license (if any) is it distributed under?** (Are there any copyrights on the data?)
 
-    xyz
+    BSD 3-Clause License
+    For every public and private use of the data set, the copyright holder must be named and for every scientific publication, the paper of the corresponding publication must be quoted.
 
 - **Are there any fees or access/export restrictions?**
     There are no fees or restrictions.
