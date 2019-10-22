@@ -1,0 +1,85 @@
+import os
+import configparser
+import csv
+import pandas as pd
+import pymysql.cursors
+import warnings
+
+
+class Judo:
+    def __init__(self, searchpoint, language, time_start, time_end, directory, abbreviation=[]):
+        self.searchpoint = searchpoint
+        self.language = language
+        self.time_start = time_start
+        self.time_end = time_end
+        self.directory = directory
+        self.abbreviation = abbreviation
+
+    def get_abbreviation(self):
+        config = configparser.ConfigParser()
+        config.read('budo_db.ini')
+        connection = pymysql.connect(host=config["budo"]["server"], port=int(config["budo"]["port"]),
+                                          user=config["budo"]["user"],
+                                          passwd=config["budo"]["password"], db=config["budo"]["database"])
+        cursor = connection.cursor()
+        for element in self.searchpoint:
+            query = "SELECT `budo` FROM `abbreviation` WHERE {} LIKE '{}' ".format(self.language, element)
+            cursor.execute(query)
+            result = cursor.fetchone()
+            if result is not None:
+                for item in result:
+                    self.abbreviation.append(item)
+            else:
+                warnings.warn('"' + str(element) + '" is not found', RuntimeWarning)
+        cursor.close()
+        connection.close()
+        return self.abbreviation
+
+    def get_datasets(self):
+        get_dataframe = pd.DataFrame()
+        if not self.abbreviation:
+            warnings.warn('The list of abbreviations is empty or incorrect', RuntimeWarning)
+            return get_dataframe
+        else:
+            files = os.listdir(self.directory)
+            for filename in files:
+                path = self.directory + '\\' + filename
+                with open(path, 'r') as infile:
+                    reader = csv.DictReader(infile)
+                    fieldnames = reader.fieldnames
+                    sel_datapoints = self.find_datapoint(fieldnames)
+                    if sel_datapoints is not False:
+                        selectedDataFrame = self.get_timeseries(sel_datapoints, path)
+                        get_dataframe = get_dataframe.append(selectedDataFrame)
+
+            return get_dataframe
+
+    def find_datapoint(self, dp_list):
+        selected_dp = []
+        for idx, data in enumerate(dp_list):
+            if all(abb in data for abb in self.abbreviation):
+                selected_dp.append(data)
+        if not selected_dp:
+            return False
+        else:
+            return selected_dp
+
+    def get_timeseries(self, selected_dp, filename):
+        data = pd.read_csv(filename, index_col=0)
+        data.fillna(method='ffill', inplace=True)
+        return data.loc[self.time_start:self.time_end, data.columns.isin(selected_dp)]
+
+if __name__ == "__main__":
+    time_start = '2015-02-01 00:00:00'
+    time_end = '2015-02-01 00:10:00'
+    directory = r'D:\IT\EBC\JUDO-master\Data\0001_EON_ERC_Main_Building\equidistant_1min\201502'
+    full_name = ["Kessel", "Primär"]
+    language = 'name_german'
+    judo = Judo(full_name, language, time_start, time_end, directory)
+
+    abb_list = judo.get_abbreviation()
+    print(abb_list)
+
+    df = judo.get_datasets()
+    print(df)
+
